@@ -22,4 +22,13 @@ export const containLetter = (pass: string): boolean => {
     return !!findUser;
   };
 
+  export const addUser = ({ name, email, password, birthDate }: any) => {
+    return AppDataSource.manager.save(User, {
+      name,
+      email,
+      password,
+      birthDate,
+    });
+  };
+
 

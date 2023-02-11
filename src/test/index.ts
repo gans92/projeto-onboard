@@ -1,10 +1,11 @@
 import { config } from "dotenv";
-import { setup, addUser } from "../index";
+import { setup } from "../index";
 import axios from "axios";
 import { expect } from "chai";
 import { AppDataSource } from "./data-source";
 import { User } from "../entities/User";
-import { QueryCreateUser } from "./QueryCreateUser";
+import { queryCreateUser } from "./queryCreateUser";
+
 
 before(async () => {
   config({ path: `${process.cwd()}/test.env` });
@@ -52,7 +53,7 @@ describe("CreateUser Mutation", () => {
 
   it("should create a new user", async () => {
     
-    const response = await QueryCreateUser(input)
+    const response = await queryCreateUser(input)
     
     delete input.password
 
@@ -72,7 +73,7 @@ describe("CreateUser Mutation", () => {
   it('should appear an error if the password is less than 6 characters', async () => {
     
     const newInput = { ...input, password: '12345' };
-    const response = await QueryCreateUser(newInput)
+    const response = await queryCreateUser(newInput)
 
 
     expect(response.data.errors[0].message).to.be.equal(
@@ -83,7 +84,7 @@ describe("CreateUser Mutation", () => {
   it('should appear an error if the password dont contain 1 letter', async () => {
     
     const newInput = { ...input, password: '123456' };
-    const response = await QueryCreateUser(newInput)
+    const response = await queryCreateUser(newInput)
 
     expect(response.data.errors[0].message).to.be.equal(
       'The password must contain at least 1 letter'
@@ -92,7 +93,7 @@ describe("CreateUser Mutation", () => {
 
   it('should appear an error if the password dont contain 1 digit', async () => {
     const newInput = { ...input, password: 'abcdef' };
-    const response = await QueryCreateUser(newInput)
+    const response = await queryCreateUser(newInput)
     expect(response.data.errors[0].message).to.be.equal(
       'The password must contain at least 1 digit'
     );
