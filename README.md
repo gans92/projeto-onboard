@@ -9,7 +9,7 @@ A backend project was developed, using graphql, in which an API was developed, w
 ```bash
 $ npm install
 $ docker-compose up -d
-npm start
+$ npm start
 ```
 
 ## Environment and tools
