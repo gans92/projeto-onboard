@@ -4,6 +4,7 @@ import axios from "axios";
 import { expect } from "chai";
 import { AppDataSource } from "./data-source";
 import { User } from "../entities/User";
+import { QueryCreateUser } from "./QueryCreateUser";
 
 before(async () => {
   config({ path: `${process.cwd()}/test.env` });
@@ -36,6 +37,13 @@ const input = {
   birthDate: "10-10-2000",
 };
 
+const input2 = {
+  name: 'UserTeste2',
+  email: 'userteste2@email.com',
+  password: '1234abc',
+  birthDate: '10-10-2000'
+};
+
 describe("CreateUser Mutation", () => {
   
   beforeEach(() => {
@@ -43,93 +51,39 @@ describe("CreateUser Mutation", () => {
   });
 
   it("should create a new user", async () => {
-    const response = await axios.post("http://localhost:4001", {
-      query: `
-        mutation CreateUser($data: UserInput!) {
-          createUser(data: $data) {
-            id
-            name
-            email
-            birthDate
-          }
-        }
-      `,
-      variables: {
-        data: input,
-      },
-    });
-
-    delete input.password;
+    
+    const response = await QueryCreateUser(input)
+    
+    delete input.password
 
     const { id, ...userFields } = response.data.data.createUser;
 
     expect(userFields).to.be.deep.eq(input);
+    expect(id).to.be.a("string");
   });
 
   // it("should appear if the user passes an existing email", async () => {
 
-  //   const response = await axios.post("http://localhost:4001", {
-  //     query: `
-  //       mutation CreateUser($data: UserInput!) {
-  //         createUser(data: $data) {
-  //           id
-  //           name
-  //           email
-  //           birthDate
-  //         }
-  //       }
-  //     `,
-  //     variables: {
-  //       data: input,
-  //     },
-  //   });
+  //   const response = await QueryCreateUser(input2)
 
-  //   expect(response.data.errors[0].message).to.be.eq("Email already exists");
+  //   expect(response.data.errors[0].message).to.be.eq("         Email already registered");
   // });
 
   it('should appear an error if the password is less than 6 characters', async () => {
-    const response = await axios.post('http://localhost:4001', {
-      query: `
-        mutation createUser($data: UserInput!){
-        createUser(data: $data){
-          id
-          name
-          email
-          birthDate
-        }  
-      }
-    `,
-      variables: {
-        data: {
-          ...input,
-          password: '1'
-        }
-      }
-    });
+    
+    const newInput = { ...input, password: '12345' };
+    const response = await QueryCreateUser(newInput)
+
+
     expect(response.data.errors[0].message).to.be.equal(
       'Password must contain at least 6 characters'
     );
   });
 
   it('should appear an error if the password dont contain 1 letter', async () => {
-    const response = await axios.post('http://localhost:4001', {
-      query: `
-        mutation createUser($data: UserInput!){
-        createUser(data: $data){
-          id
-          name
-          email
-          birthDate
-        }  
-      }
-    `,
-      variables: {
-        data: {
-          ...input,
-          password: '123456'
-        }
-      }
-    });
+    
+    const newInput = { ...input, password: '123456' };
+    const response = await QueryCreateUser(newInput)
 
     expect(response.data.errors[0].message).to.be.equal(
       'The password must contain at least 1 letter'
@@ -137,24 +91,8 @@ describe("CreateUser Mutation", () => {
   });
 
   it('should appear an error if the password dont contain 1 digit', async () => {
-    const response = await axios.post('http://localhost:4001', {
-      query: `
-        mutation createUser($data: UserInput!){
-        createUser(data: $data){
-          id
-          name
-          email
-          birthDate
-        }  
-      }
-    `,
-      variables: {
-        data: {
-          ...input,
-          password: 'abcdef'
-        }
-      }
-    });
+    const newInput = { ...input, password: 'abcdef' };
+    const response = await QueryCreateUser(newInput)
     expect(response.data.errors[0].message).to.be.equal(
       'The password must contain at least 1 digit'
     );
