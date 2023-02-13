@@ -1,6 +1,14 @@
-import { User } from "entities/User";
+import { User } from "../entities/User";
 import { CustomError } from "../errors";
-import { addUser, containDigit, containLetter } from "../function";
+import {
+  addUser,
+  containDigit,
+  containLetter,
+  findUserData,
+  generateToken,
+  toHashPassword,
+  validateEmail
+} from "../function";
 import * as bcrypt from "bcrypt";
 
 export const resolvers = {
@@ -12,7 +20,7 @@ export const resolvers = {
 
   Mutation: {
     async createUser(_, args) {
-      const password = await bcrypt.hash(args.data.password, 10);
+      const password = await toHashPassword(args.data.password)
 
       const user: User = {
         ...args.data,
@@ -48,7 +56,36 @@ export const resolvers = {
         password,
       };
 
+      if (!validateEmail(user.email)) {
+        throw new CustomError("Invalid email format", 400);
+      }
+
       return addUser(userData);
     },
+
+    async login(_, args) {
+
+      const user = await findUserData(args.data.email);
+
+      if (!user) {
+        throw new CustomError("Unable to login", 401);
+      }
+
+      const valid = await bcrypt.compare(args.data.password, user.password);
+
+      if (!valid) {
+        throw new CustomError("Unable to login", 401);
+      }
+
+      return {
+        user,
+        token: generateToken(user)
+      };
+    }
   },
 };
+
+function isValidateEmail(email: string) {
+  throw new Error("Function not implemented.");
+}
+
