@@ -5,6 +5,7 @@ import {
   containDigit,
   containLetter,
   findUserData,
+  findUserEmail,
   generateToken,
   toHashPassword,
   validateEmail
@@ -47,9 +48,9 @@ export const resolvers = {
         );
       }
 
-      // if (await findUserEmail(user.email)) {
-      //   throw new CustomError('Email already registered', 409);
-      // }
+      if (await findUserEmail(user.email)) {
+        throw new CustomError('Email already registered', 409);
+      }
 
       const userData: User = {
         ...user,

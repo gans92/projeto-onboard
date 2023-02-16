@@ -3,17 +3,21 @@ import { User } from './entities/User';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 
+const letters = new RegExp('[a-zA-Z]');
+const digits = new RegExp('[0-9]+');
+const isEmail = new RegExp('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$');
+
 export const containLetter = (pass: string): boolean => {
-    const letters = new RegExp('[a-zA-Z]')
-    const password = pass;
-    return letters.test(password);
+    return letters.test(pass);
   };
 
   export const containDigit = (pass: string) => {
-    const digits = new RegExp('[0-9]+');
-    const password = pass;
-    return digits.test(password);
+    return digits.test(pass);
   };
+
+  export const validateEmail = (email: string) => {
+  return isEmail.test(email)
+  }
   
   export const findUserEmail = async (email: string): Promise<boolean> => {
     const userEmail = email;
@@ -53,7 +57,4 @@ export const containLetter = (pass: string): boolean => {
     return bcrypt.hash(password, 10);
   }
 
-  export const validateEmail = (email: string) => {
-    const isEmailValid = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-  return isEmailValid.test(email)
-  }
+  
