@@ -1,6 +1,7 @@
 import { ApolloServer } from "apollo-server";
 import { resolvers } from "../resolvers/resolvers";
 import { typeDefs } from "../schema/schema";
+import { formatError } from "../errors";
 
 export const setupServer = async () => {
   const server = new ApolloServer({
@@ -11,6 +12,7 @@ export const setupServer = async () => {
       const auth = req.headers.authorization || "";
       return { auth };
     },
+    formatError
   });
 
   const { url } = await server.listen(process.env.PORT);

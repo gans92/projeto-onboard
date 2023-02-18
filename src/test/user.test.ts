@@ -2,16 +2,9 @@
 // import { AppDataSource } from '../data-source';
 // import { User } from '../entities/User';
 // import { addUser, toHashPassword, generateToken } from '../function';
-// import { invalidId } from './constants';
-// import { invalidToken } from './constants';
+// import { invalidId, input, fakeUser } from './constants';
 // import { queryGetUser } from './query-user';
-
-// const input = {
-//   name: 'User',
-//   email: 'userteste@email.com',
-//   password: '1234abc',
-//   birthDate: '10-10-2000'
-// };
+// import { input } from './constants';
 
 // describe('query user', async () => {
 //   beforeEach(async () => {

@@ -57,3 +57,12 @@ export const generateToken = (user: User) => {
 export const toHashPassword = (password: string) => {
   return bcrypt.hash(password, 10);
 };
+
+export const getAllUsers = async (quantity: number) => {
+  return await AppDataSource.manager.getRepository(User).find({
+    order: {
+      name: "ASC",
+    },
+    take: quantity,
+  });
+}

@@ -9,7 +9,8 @@ import {
   generateToken,
   toHashPassword,
   validateEmail,
-  findUserById
+  findUserById,
+  getAllUsers,
 } from "../function";
 import * as bcrypt from "bcrypt";
 import { getUserIdByToken } from "../utils/get-userId-token";
@@ -17,23 +18,31 @@ import { getUserIdByToken } from "../utils/get-userId-token";
 export const resolvers = {
   Query: {
     user: async (_, args, context: { req }) => {
+      // const userId = getUserIdByToken(context);
+      // if (userId !== args.id) {
+      //   throw new CustomError("Unauthorized", 401);
+      // }
       const user = await findUserById(args.id);
-      if (!user) {
-        throw new CustomError("User not found", 404);
-      }
-
-      const userId = getUserIdByToken(context);
-      if (!(await findUserById(userId))) {
-        throw new CustomError("invalid token", 404);
-      }
-      
+      // if (!user) {
+      //   throw new CustomError("User not found", 404);
+      // }
       return user;
+    },
+
+    users: async (_, args, context: { req }) => {
+      // const userId = getUserIdByToken(context);
+      // if (userId !== args.id) {
+      //   throw new CustomError("Unauthorized", 401);
+      // }
+      const quantity = args.quantity;
+
+      return await getAllUsers(quantity);
     },
   },
 
   Mutation: {
     async createUser(_, args) {
-      const password = await toHashPassword(args.data.password)
+      const password = await toHashPassword(args.data.password);
 
       const user: User = {
         ...args.data,
@@ -61,7 +70,7 @@ export const resolvers = {
       }
 
       if (await findUserEmail(user.email)) {
-        throw new CustomError('Email already registered', 409);
+        throw new CustomError("Email already registered", 409);
       }
 
       const userData: User = {
@@ -77,7 +86,6 @@ export const resolvers = {
     },
 
     async login(_, args) {
-
       const user = await findUserData(args.data.email);
 
       if (!user) {
@@ -92,10 +100,8 @@ export const resolvers = {
 
       return {
         user,
-        token: generateToken(user)
+        token: generateToken(user),
       };
-    }
+    },
   },
 };
-
-
