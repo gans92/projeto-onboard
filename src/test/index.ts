@@ -8,8 +8,9 @@ before(async () => {
     }
 );
 
-require('./hello.test');
-
 require('./create-user.test');
 
 require('./login.test');
+
+require('./user.test');
+

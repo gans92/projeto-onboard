@@ -8,14 +8,26 @@ import {
   findUserEmail,
   generateToken,
   toHashPassword,
-  validateEmail
+  validateEmail,
+  findUserById
 } from "../function";
 import * as bcrypt from "bcrypt";
+import { getUserIdByToken } from "../utils/get-userId-token";
 
 export const resolvers = {
   Query: {
-    hello: () => {
-      return "Hello world!";
+    user: async (_, args, context: { req }) => {
+      const user = await findUserById(args.id);
+      if (!user) {
+        throw new CustomError("User not found", 404);
+      }
+
+      const userId = getUserIdByToken(context);
+      if (!(await findUserById(userId))) {
+        throw new CustomError("invalid token", 404);
+      }
+      
+      return user;
     },
   },
 
@@ -86,7 +98,4 @@ export const resolvers = {
   },
 };
 
-function isValidateEmail(email: string) {
-  throw new Error("Function not implemented.");
-}
 
