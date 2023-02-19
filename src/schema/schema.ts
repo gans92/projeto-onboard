@@ -3,7 +3,7 @@ import { gql } from "apollo-server";
 export const typeDefs = gql`
   type Query {
     user(id: ID!): User!
-    users(quantity: Int = 10): [User!]!
+    users(quantity: Int = 10, page: Int = 1): UserList
   }
 
   type User {
@@ -11,6 +11,14 @@ export const typeDefs = gql`
     name: String!
     email: String!
     birthDate: String
+  }
+
+  type UserList {
+    users: [User!]!
+    count: Int
+    before: Int
+    after: Int
+    page: Int
   }
 
   input UserInput {

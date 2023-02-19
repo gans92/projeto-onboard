@@ -11,6 +11,7 @@ import {
   validateEmail,
   findUserById,
   getAllUsers,
+  getTotalNumbersOfUser,
 } from "../function";
 import * as bcrypt from "bcrypt";
 import { getUserIdByToken } from "../utils/get-userId-token";
@@ -18,10 +19,10 @@ import { getUserIdByToken } from "../utils/get-userId-token";
 export const resolvers = {
   Query: {
     user: async (_, args, context: { req }) => {
-      // const userId = getUserIdByToken(context);
-      // if (userId !== args.id) {
-      //   throw new CustomError("Unauthorized", 401);
-      // }
+      const userId = getUserIdByToken(context);
+      if (!userId) {
+        throw new CustomError("Unauthorized", 401);
+      }
       const user = await findUserById(args.id);
       // if (!user) {
       //   throw new CustomError("User not found", 404);
@@ -35,8 +36,23 @@ export const resolvers = {
       //   throw new CustomError("Unauthorized", 401);
       // }
       const quantity = args.quantity;
+      const page = args.page;
 
-      return await getAllUsers(quantity);
+      const users = await getAllUsers(quantity, page);
+      const totalUsers = await getTotalNumbersOfUser();
+
+      return {
+        users,
+        count: totalUsers,
+        before:
+          page === 1
+            ? 0
+            : quantity * (page - 1) > totalUsers
+            ? 0
+            : quantity * (page - 1),
+        after: page * quantity > totalUsers ? 0 : totalUsers - page * quantity,
+        page,
+      };
     },
   },
 
