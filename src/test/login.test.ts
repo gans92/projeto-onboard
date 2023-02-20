@@ -1,11 +1,11 @@
-import { expect } from 'chai';
-import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
-import { queryLogin } from './query-login';
-import { queryCreateUser } from './query-create-user';
-import { loginInput, input } from './constants';
+import { expect } from "chai";
+import { AppDataSource } from "../data-source";
+import { User } from "../entities/User";
+import { input, loginInput } from "./constants";
+import { queryCreateUser } from "./query-create-user";
+import { queryLogin } from "./query-login";
 
-describe('Login Mutation', async () => {
+describe("Login Mutation", async () => {
   beforeEach(async () => {
     await AppDataSource.getRepository(User).delete({});
   });
@@ -20,7 +20,7 @@ describe('Login Mutation', async () => {
   //   delete findUser.password;
   //   delete user.password;
   //   const token = response.data.data.login.token;
-  //   const decoded = jwt.verify(token, 
+  //   const decoded = jwt.verify(token,
   //       process.env.JWT_SECRET as string);
   //   const tokenPayload = decoded as jwt.JwtPayload;
   //   expect(user).to.be.deep.equal(findUser);
@@ -28,19 +28,19 @@ describe('Login Mutation', async () => {
   //   expect(tokenPayload.userId).to.be.equal(findUser.id);
   // });
 
-  it('should not be able to login with wrong password', async () => {
+  it("should not be able to login with wrong password", async () => {
     await queryCreateUser(input);
-    const newLogin = { ...loginInput, password: 'alecrim1' };
+    const newLogin = { ...loginInput, password: "alecrim1" };
     const response = await queryLogin(newLogin);
-    expect(response.data.errors[0].message).to.be.equal('Unable to login');
+    expect(response.data.errors[0].message).to.be.equal("Unable to login");
     expect(response.data.errors[0].code).to.be.equal(401);
   });
 
-  it('should not be able to login with email that does not exist', async () => {
+  it("should not be able to login with email that does not exist", async () => {
     await queryCreateUser(input);
-    const newLogin = { ...loginInput, email: 'teste@gmail.com' };
+    const newLogin = { ...loginInput, email: "teste@gmail.com" };
     const response = await queryLogin(newLogin);
-    expect(response.data.errors[0].message).to.be.equal('Unable to login');
+    expect(response.data.errors[0].message).to.be.equal("Unable to login");
     expect(response.data.errors[0].code).to.be.equal(401);
   });
 });

@@ -1,19 +1,22 @@
+import * as bcrypt from "bcrypt";
+import { AppDataSource } from "../data-source";
+import { Address } from "../entities/address";
 import { User } from "../entities/User";
 import { CustomError } from "../errors";
 import {
+  addAddress,
   addUser,
   containDigit,
   containLetter,
+  findUserById,
   findUserData,
   findUserEmail,
   generateToken,
+  getCountUsers,
+  getUsersAndAddress,
   toHashPassword,
   validateEmail,
-  findUserById,
-  getAllUsers,
-  getTotalNumbersOfUser,
 } from "../function";
-import * as bcrypt from "bcrypt";
 import { getUserIdByToken } from "../utils/get-userId-token";
 
 export const resolvers = {
@@ -38,18 +41,14 @@ export const resolvers = {
       const quantity = args.quantity;
       const page = args.page;
 
-      const users = await getAllUsers(quantity, page);
-      const totalUsers = await getTotalNumbersOfUser();
+      const users = await getUsersAndAddress(quantity, page);
+      const totalUsers = await getCountUsers();
 
       return {
-        users,
+        users: users,
         count: totalUsers,
         before:
-          page === 1
-            ? 0
-            : quantity * (page - 1) > totalUsers
-            ? 0
-            : quantity * (page - 1),
+        quantity * (page - 1) > totalUsers,
         after: page * quantity > totalUsers ? 0 : totalUsers - page * quantity,
         page,
       };
@@ -119,5 +118,16 @@ export const resolvers = {
         token: generateToken(user),
       };
     },
+
+    async createAddress (_, args, context: { req }) {
+      // const userId = getUserIdByToken(context);
+      // if (!userId) {
+      //   throw new CustomError("Unauthorized", 401);
+      // }
+      
+     const address = args.data
+
+     return addAddress(address)
+    }
   },
 };

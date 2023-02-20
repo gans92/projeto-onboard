@@ -31,6 +31,7 @@ export const typeDefs = gql`
   type Mutation {
     createUser(data: UserInput!): User!
     login(data: LoginInput!) : Auth!
+    createAddress(data: AddressInput!): Address!
   }
 
   input LoginInput {
@@ -41,6 +42,28 @@ export const typeDefs = gql`
   type Auth {
     user: User!
     token: String!
+  }
+
+  type Address {
+    id: ID!
+    cep: String!
+    street: String!
+    streetNumber: Int!
+    complement: String!
+    neighborhood: String!
+    city: String!
+    state: String!
+  }
+
+  input AddressInput {
+    cep: String!
+    street: String!
+    streetNumber: Int!
+    complement: String!
+    neighborhood: String!
+    city: String!
+    state: String!
+    user: String!
   }
 
 `;

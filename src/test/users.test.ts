@@ -1,24 +1,21 @@
-import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
-import { addUser, toHashPassword, generateToken } from '../function';
-import { queryGetAllUsers } from './query-users';
-import { input } from './constants';
-import { expect } from 'chai';
-import { invalidToken } from './constants';
+import { expect } from "chai";
+import { addUser, generateToken, toHashPassword } from "../function";
+import { input, invalidToken } from "./constants";
+import { queryGetAllUsers } from "./query-users";
 
-describe('query users', async () => {
-//   beforeEach(async () => {
-//     AppDataSource.getRepository(User);
-//   });
-//   afterEach(async () => {
-//     await AppDataSource.getRepository(User).delete({});
-//   });
+describe("query users", async () => {
+  //   beforeEach(async () => {
+  //     AppDataSource.getRepository(User);
+  //   });
+  //   afterEach(async () => {
+  //     await AppDataSource.getRepository(User).delete({});
+  //   });
 
-  it('should return a vector of users', async () => {
+  it("should return a vector of users", async () => {
     const arrUsers = [];
     const userOne = {
       ...input,
-      password: await toHashPassword(input.password)
+      password: await toHashPassword(input.password),
     };
     const user = await addUser(userOne);
     const token: string = generateToken(user);
@@ -29,26 +26,26 @@ describe('query users', async () => {
     expect(listUsersResponse).to.be.deep.equal(arrUsers);
   });
 
-  it('should appear an error if token is invalid', async () => {
+  it("should appear an error if token is invalid", async () => {
     const userOne = {
       ...input,
-      password: await toHashPassword(input.password)
+      password: await toHashPassword(input.password),
     };
     await addUser(userOne);
     const response = await queryGetAllUsers(invalidToken);
-    expect(response.data.errors[0].message).to.be.equal('Invalid token');
+    expect(response.data.errors[0].message).to.be.equal("Invalid token");
     expect(response.data.errors[0].code).to.be.equal(401);
   });
 
-  it('an error should appear if authentication is not passed', async () => {
+  it("an error should appear if authentication is not passed", async () => {
     const userOne = {
       ...input,
-      password: await toHashPassword(input.password)
+      password: await toHashPassword(input.password),
     };
     await addUser(userOne);
-    const response = await queryGetAllUsers('');
+    const response = await queryGetAllUsers("");
     expect(response.data.errors[0].message).to.be.equal(
-      'Authentication required'
+      "Authentication required"
     );
     expect(response.data.errors[0].code).to.be.equal(401);
   });
